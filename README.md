@@ -18,4 +18,42 @@ to [CSS `PseudoClass`](http://docs.oracle.com/javase/8/javafx/api/javafx/css/Pse
 types to be displayed in different styles. The model used here lends itself to easy provision of these functions by method
 references, but less amenable models should not cause too much trouble.
 
+For example, if the model were implemented with naïve, unrelated classes 
+
+    public class Company {
+        private final ObservableList<Department> departments = FXCollections.observableArrayList();
+        public ObservableList<Department> getDepartments() {
+            return departments ;
+        }
+        
+        // ...
+    }
+    
+    public class Department {
+        private final ObservableList<Employee> employees = FXCollections.observableArrayList();
+        public ObservableList<Employee> getEmployees() {
+            return employees ;
+        }
+        
+        // ...
+    }
+    
+then (by nature of the homogeneity of `TreeItem`, where the type of the `children` list is the same as the type of `value`),
+you would necessarily have to test for types and downcast *somewhere*. This at least allows you to encapsulate that as a strategy:
+
+    Function<Object, ObservableList<? extends Object>> childNodeGenerator = obj -> {
+        if (obj instanceof Company) {
+            return ((Company)obj).getDepartments();
+        }
+        if (obj instanceof Department) {
+            return ((Department)obj).getEmployees();
+        }
+        // ...
+        return FXCollections.emptyObservableList();
+    };
+    ModelTree<Object> tree = new ModelTree(new Company(...), childNodeGenerator, 
+        obj -> new ReadOnlyStringWrapper(obj.toString()));
+    
+In such cases you could also consider creating an interface with an appropriate `getChildren()` method and using an adapter for each of the individual classes.
+
 Obvious enhancements could be made to, for example, allow editing in the tree.
