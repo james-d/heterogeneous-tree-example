@@ -1,0 +1,25 @@
+
+.tree-cell:company {
+	-fx-background: paleturquoise ;
+}
+
+.tree-cell:department {
+	-fx-background: honeydew ;
+}
+
+.tree-cell:employee {
+	-fx-background: powderblue ;
+}
+
+.tree-cell:role {
+	-fx-background: lightcyan ;
+}
+
+.tree-cell:filled:hover {
+	-fx-background-color: forestgreen, -fx-background ;
+	-fx-background-insets: 0,2 ;
+}
+
+.tree-cell:filled:selected {
+	-fx-background: forestgreen ;
+}
